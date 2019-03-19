@@ -1,5 +1,5 @@
 -- Drops the bamazon_db if it currently exists --
-DROP DATABASE IF EXISTS bamason_db;
+DROP DATABASE IF EXISTS bamazon_db;
 
 -- Creates the database --
 CREATE DATABASE bamazon_db;
@@ -10,11 +10,11 @@ USE bamazon_db;
 -- Creates the table "products" --
 -- Columns for id, product name, department name, cost to customer, stock quantity --
 CREATE TABLE products (
-    item_id             INTEGER AUTO_INCREMENT PRIMARY KEY,
+    item_id             INT AUTO_INCREMENT PRIMARY KEY,
     product_name        VARCHAR(30) NOT NULL,
     department_name     VARCHAR(30) NOT NULL,
-    price               INTEGER(10) NOT NULL,
-    stock_quantity      INTEGER(10)
+    price               FLOAT NOT NULL,
+    stock_quantity      INT NULL
 );
 
 -- Add data into the table --
@@ -37,7 +37,7 @@ INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ("small container", "kitchen", 3.50, 500);
 
 INSERT INTO products (product_name, department_name, price, stock_quantity)
-VALUES ("frut bowl", "home", 10.00, 100);
+VALUES ("fruit bowl", "home", 10.00, 100);
 
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ("botanical shampoo", "bath", 13.25, 100);
