@@ -36,7 +36,7 @@ function displayProducts() {
         ask();
     })
 };
-// connection.end();
+
 
 
 //function which uses inquirer to get the user to enter product id and quantity
@@ -58,31 +58,38 @@ function ask() {
         // console.log(answer.productName, answer.quantityRequest);
         var idRequest = answer.productName;
         var quantityRequest = answer.quantityRequest;
-
-        connection.query("SELECT stock_quantity FROM products WHERE ?",
+        // make a connection query with mysql database and the products table
+        connection.query("SELECT * FROM products WHERE ?",
+        // the collumn name in the table is item_id
             { item_id: idRequest }, function (err, results) {
-                console.log("results " + results);
+                
                 var remainingStock = results[0].stock_quantity;
                 console.log("remaining: " + remainingStock);
-                var total = parseInt(quantityRequest) * parseInt(results[0].price);
+                
                 //check if the stock quantity is equal or less than the requested quantity
                 console.log("requested stock: " + quantityRequest);
-
+                //check the available quantity against the requested value
                 if (quantityRequest > remainingStock) {
                     console.log("insufficient stock");
+                    //call the ask function to begin the questions again
+                    ask();
                 } else if (quantityRequest <= remainingStock) {
+                    // if the stock is greater, fulfill the order 
                     var updatedStock = parseInt(remainingStock) - parseInt(quantityRequest);
+                    // console.log("Updated stock: " + updatedStock);
+                    //update the database to show the new quantitiy
+                    connection.query("UPDATE products SET ? WHERE ?", 
+                    [{stock_quantity: updatedStock}, {item_id: idRequest}],
+                    function(error) {
+                        if(error) throw err;
+                        console.log("Updated stock, now remaining : " + updatedStock);
 
-                    console.log(total);
-                    console.log("updated stock: " + updatedStock);
-
-                    // connection.query("UPDATE products SET ? WHERE ?"), 
-                    // [{stock_quantity: updatedStock}, {item_id: idRequest}],
-
-                    // function(error) {
-                    //     if(error) throw err;
-                    //     console.log("updated stock to : " + updatedStock);
-                    // }
+                        //calculate the total cost of the order
+                        var total = parseInt(quantityRequest) * results[0].price;
+                        console.log("Order total: $ " + total);
+                        //call the ask function to begin the questions again
+                        ask();
+                    })
                 }
             })
     });
@@ -90,6 +97,5 @@ function ask() {
 };
 
 
-//check the quantity available 
-//if insufficient: display infufficent 
-//if sufficient amount, update the SQL database and show the purchase price
+
+
